@@ -1,0 +1,83 @@
+:root {
+  --text: #52525b;
+  --text-h: #18181b;
+  --text-dim: #8f8f97;
+
+  --bg: #ffffff;
+  --bg-raised: #f7f7f8;
+  --bg-subtle: #f2f2f4;
+
+  --border: #e5e5e8;
+  --border-strong: #d4d4d8;
+
+  --accent: #18181b;
+  --accent-dim: #3f3f46;
+  --accent-bg: rgba(24, 24, 27, 0.05);
+  --accent-border: rgba(24, 24, 27, 0.2);
+
+  --danger: #e0342d;
+
+  --shadow:
+    rgba(24, 24, 27, 0.08) 0 10px 30px -12px, rgba(24, 24, 27, 0.06) 0 2px 8px -2px;
+  --glow: 0 0 0 1px rgba(24, 24, 27, 0.06), 0 4px 16px rgba(24, 24, 27, 0.08);
+
+  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 17px/150% var(--sans);
+  letter-spacing: 0.1px;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  color: var(--text);
+  background-color: var(--bg);
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--heading);
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: -0.3px;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: var(--mono);
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: var(--bg-raised);
+  color: var(--text-h);
+}
