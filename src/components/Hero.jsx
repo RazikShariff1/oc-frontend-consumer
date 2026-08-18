@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react'
 import mountains from '../assets/mountains.png'
 import rider from '../assets/biker3.png'
+import bikeLeft from '../assets/bike.png'
+import bikeRight from '../assets/bike2.png'
 import './Hero.css'
 
 const STICKY_TOP_OFFSET = 86 // must match .hero-pin's `top` in Hero.css (height of the sticky nav)
 const SHRINK_RUNWAY_PX = 800 // fixed scroll distance the shrink plays out over, independent of stage height
 const MAX_RADIUS = 20
+const NEIGHBOR_GAP = 24 // px gap between the docked hero and the peeking neighbours
+const NEIGHBOR_REVEAL_START = 0.75 // fraction of shrink progress at which neighbours start fading in
 
 // The hero docks down to 80% of the viewport width, at a 16:9 ratio.
 function getPrimaryTargetSize() {
@@ -15,6 +19,7 @@ function getPrimaryTargetSize() {
 
 function Hero() {
   const stageRef = useRef(null)
+  const pinRef = useRef(null)
   const primaryRef = useRef(null)
   const heroRef = useRef(null)
   const bgLayerRef = useRef(null)
@@ -25,8 +30,9 @@ function Hero() {
   // docked size as the stage scrolls through — a zoom-out, not a slider.
   useEffect(() => {
     const stage = stageRef.current
+    const pin = pinRef.current
     const primary = primaryRef.current
-    if (!stage || !primary) return
+    if (!stage || !pin || !primary) return
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     // Browsers restore the previous scroll position on refresh by default,
@@ -52,8 +58,8 @@ function Hero() {
       if (isDesktop) {
         naturalHeight = Math.min(Math.max(560, window.innerWidth * 0.46), 760)
       } else {
-        primary.style.setProperty('--primary-w', '100%')
-        primary.style.setProperty('--primary-h', 'auto')
+        pin.style.setProperty('--primary-w', '100%')
+        pin.style.setProperty('--primary-h', 'auto')
         naturalHeight = primary.getBoundingClientRect().height
       }
 
@@ -62,9 +68,10 @@ function Hero() {
 
     const update = () => {
       if (reduceMotion) {
-        primary.style.setProperty('--primary-w', '100%')
-        primary.style.setProperty('--primary-h', `${naturalHeight}px`)
-        primary.style.setProperty('--primary-radius', '0px')
+        pin.style.setProperty('--primary-w', '100%')
+        pin.style.setProperty('--primary-h', `${naturalHeight}px`)
+        pin.style.setProperty('--primary-radius', '0px')
+        pin.style.setProperty('--neighbor-opacity', '0')
         return
       }
 
@@ -76,9 +83,21 @@ function Hero() {
       const width = naturalWidth - progress * (naturalWidth - targetWidth)
       const height = naturalHeight - progress * (naturalHeight - targetHeight)
 
-      primary.style.setProperty('--primary-w', `${width}px`)
-      primary.style.setProperty('--primary-h', `${height}px`)
-      primary.style.setProperty('--primary-radius', `${progress * MAX_RADIUS}px`)
+      pin.style.setProperty('--primary-w', `${width}px`)
+      pin.style.setProperty('--primary-h', `${height}px`)
+      pin.style.setProperty('--primary-radius', `${progress * MAX_RADIUS}px`)
+
+      // Neighbours match the docked hero's own size exactly, sitting just
+      // outside its left/right edges — only fully revealed once the
+      // zoom-out finishes, so they read as "what's next" rather than clutter
+      // mid-shrink.
+      const neighborOpacity = Math.min(
+        Math.max((progress - NEIGHBOR_REVEAL_START) / (1 - NEIGHBOR_REVEAL_START), 0),
+        1,
+      )
+      pin.style.setProperty('--neighbor-opacity', `${neighborOpacity}`)
+      pin.style.setProperty('--neighbor-left-x', `${-(width * 1.5 + NEIGHBOR_GAP)}px`)
+      pin.style.setProperty('--neighbor-right-x', `${width * 0.5 + NEIGHBOR_GAP}px`)
     }
 
     const handleScroll = () => {
@@ -146,7 +165,13 @@ function Hero() {
 
   return (
     <section className="hero-stage" ref={stageRef}>
-      <div className="hero-pin">
+      <div className="hero-pin" ref={pinRef}>
+        <div className="hero-neighbor hero-neighbor-left" aria-hidden="true">
+          <img src={bikeLeft} alt="" />
+        </div>
+        <div className="hero-neighbor hero-neighbor-right" aria-hidden="true">
+          <img src={bikeRight} alt="" />
+        </div>
         <div className="hero-frame" ref={primaryRef}>
           <div className="hero" ref={heroRef}>
             <div className="hero-bg-layer" ref={bgLayerRef}>

@@ -54,6 +54,41 @@
   top: 86px;
   z-index: 10;
   padding: 12px 0 24px;
+  overflow: hidden;
+}
+
+/* Peek previews either side of the docked hero — same width/height as
+   .hero-frame (they share its --primary-w/--primary-h/--primary-radius),
+   only faded in once the zoom-out finishes (see --neighbor-opacity in
+   Hero.jsx). Desktop-only: the mobile hero is already full-width, so there's
+   no room either side to peek from. */
+.hero-neighbor {
+  display: none;
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: var(--primary-w, 100%);
+  height: var(--primary-h, auto);
+  border-radius: var(--primary-radius, 0px);
+  overflow: hidden;
+  opacity: var(--neighbor-opacity, 0);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.hero-neighbor img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-neighbor-left {
+  transform: translateX(var(--neighbor-left-x, 0px));
+}
+
+.hero-neighbor-right {
+  transform: translateX(var(--neighbor-right-x, 0px));
 }
 
 .hero-frame {
@@ -241,6 +276,10 @@
 
 /* ---------- Desktop: recreate the reference layout with absolute placement ---------- */
 @media (min-width: 960px) {
+  .hero-neighbor {
+    display: block;
+  }
+
   .hero {
     display: block;
   }
@@ -307,5 +346,9 @@
 
   .hero-pin {
     position: static;
+  }
+
+  .hero-neighbor {
+    display: none !important;
   }
 }
