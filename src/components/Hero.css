@@ -57,85 +57,131 @@
   overflow: hidden;
 }
 
-/* Peek previews either side of the docked hero — same width/height as
-   .hero-frame (they share its --primary-w/--primary-h/--primary-radius),
-   only faded in once the zoom-out finishes (see --neighbor-opacity in
-   Hero.jsx). Desktop-only: the mobile hero is already full-width, so there's
-   no room either side to peek from. */
-.hero-neighbor {
+.hero-track {
+  position: relative;
+}
+
+/* Each slide (left peek / docked hero / right peek, or one of the 4
+   in-flight positions during a slide transition) shares the same box:
+   sized off --primary-w/h/radius (driven by the scroll-docking effect in
+   Hero.jsx), positioned by --slot-m slots of (width + gap) either side of
+   center. Mobile: only the active slide renders, in normal flow, so
+   .hero-pin sizes to it naturally — there's no room to peek either side of
+   a full-width mobile hero anyway. */
+.hero-slot {
   display: none;
-  position: absolute;
-  top: 12px;
-  left: 50%;
   width: var(--primary-w, 100%);
   height: var(--primary-h, auto);
   border-radius: var(--primary-radius, 0px);
   overflow: hidden;
-  opacity: var(--neighbor-opacity, 0);
-  pointer-events: none;
-  will-change: transform, opacity;
+  isolation: isolate;
 }
 
-.hero-neighbor img {
+.hero-slot-active {
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero-neighbor-left {
-  transform: translateX(var(--neighbor-left-x, 0px));
-}
-
-.hero-neighbor-right {
-  transform: translateX(var(--neighbor-right-x, 0px));
-}
-
-.hero-frame {
   position: relative;
-  width: var(--primary-w, 100%);
-  height: var(--primary-h, auto);
-  margin: 0 auto;
-  border-radius: var(--primary-radius, 0px);
-  overflow: hidden;
-  isolation: isolate;
-  box-shadow: 0 20px 45px -20px rgba(0, 0, 0, 0.6);
-  container-type: inline-size;
-  will-change: width, height;
 }
 
-.hero-frame .hero {
-  width: 100%;
-  height: 100%;
-}
-
-.hero {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  background: #eef0f2;
-  padding: 40px 24px 48px;
-  gap: 28px;
-}
-
-.hero-bg-layer {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  overflow: hidden;
-  will-change: transform;
-  transition: transform 0.4s ease-out;
-}
-
-.hero-bg {
+.hero-slot img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center bottom;
   transform-origin: center bottom;
   animation: heroBgZoom 22s ease-in-out infinite alternate;
+}
+
+/* A crisp inset edge outlines each side slide's card against the page's
+   white background, without tinting the photo itself. */
+.hero-slot:not(.hero-slot-active)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.hero-bg-layer {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.4s ease-out;
+}
+
+.hero-nav {
+  display: none;
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: #18181b;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.hero-nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hero-nav:hover {
+  background: #fff;
+}
+
+.hero-nav:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.hero-pin.is-docked .hero-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero-nav-left {
+  left: calc(50% - 0.5 * var(--primary-w, 0px) + 16px);
+}
+
+.hero-nav-right {
+  left: calc(50% + 0.5 * var(--primary-w, 0px) - 16px - 44px);
+}
+
+/* The text/CTA layer always sits centered over the docked hero, independent
+   of the image row's sliding transition (see Hero.jsx) — it fades out while
+   a slide is in flight and back in once the new slide lands. */
+.hero-content-overlay {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: var(--primary-w, 100%);
+  height: var(--primary-h, auto);
+  transform: translateX(-50%);
+  border-radius: var(--primary-radius, 0px);
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 24px 48px;
+  gap: 28px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.hero-content-overlay.is-hidden {
+  opacity: 0;
 }
 
 .hero-wordmark-layer {
@@ -188,6 +234,8 @@
   flex-direction: column;
   gap: 12px;
   max-width: 420px;
+  padding: 0 24px 48px;
+  pointer-events: auto;
 }
 
 .hero-rule {
@@ -274,14 +322,42 @@
   transform: translateY(-1px);
 }
 
+/* Mobile: a plain, full-width hero — no peeks, no nav arrows, no
+   transitions (there's no room to slide anything either side of a
+   full-bleed card), so the active slide just needs a sane fixed
+   proportion instead of the desktop's absolute-layered sizing formula. */
+.hero-slot-active {
+  aspect-ratio: 4 / 5;
+}
+
 /* ---------- Desktop: recreate the reference layout with absolute placement ---------- */
 @media (min-width: 960px) {
-  .hero-neighbor {
-    display: block;
+  .hero-pin {
+    height: calc(var(--primary-h, 0px) + 36px);
   }
 
-  .hero {
+  .hero-track {
+    height: 100%;
+  }
+
+  .hero-slot {
     display: block;
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(calc(-50% + var(--slot-m, 0) * (var(--primary-w, 0px) + 24px)));
+  }
+
+  .hero-slot.is-animating {
+    transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .hero-slot-active {
+    aspect-ratio: auto;
+  }
+
+  .hero-nav {
+    display: flex;
   }
 
   .hero-wordmark-layer {
@@ -316,16 +392,16 @@
   }
 
   .hero-content {
-    position: absolute;
     left: 3%;
     bottom: 9%;
     max-width: 440px;
+    padding: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-bg,
-  .hero-bg-layer,
+  .hero-bg-layer img,
+  .hero-slot img,
   .hero-wordmark,
   .hero-wordmark-layer,
   .hero-rider,
@@ -340,6 +416,10 @@
     transform: none !important;
   }
 
+  .hero-content-overlay {
+    opacity: 1 !important;
+  }
+
   .hero-stage {
     min-height: 0;
   }
@@ -348,7 +428,7 @@
     position: static;
   }
 
-  .hero-neighbor {
+  .hero-nav {
     display: none !important;
   }
 }
