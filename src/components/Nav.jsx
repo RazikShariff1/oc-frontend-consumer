@@ -15,8 +15,8 @@ function Nav() {
   return (
     <header className="nav">
       <div className="nav-bar">
-        <a className="nav-logo" href="#" aria-label="Orca home">
-          Orca
+        <a className="nav-logo" href="#" aria-label="Moto Tron home">
+          Moto Tron
         </a>
 
         <nav className="nav-links" aria-label="Primary">

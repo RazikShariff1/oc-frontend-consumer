@@ -1,0 +1,108 @@
+@keyframes brandsScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Track holds two copies of the brand list back to back — shifting by
+       exactly half its width loops seamlessly into the duplicate copy. */
+    transform: translateX(-50%);
+  }
+}
+
+.brands {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 48px 0 56px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.brands-eyebrow {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.brands-track-viewport {
+  width: 100%;
+  overflow: hidden;
+  /* Fades brand items in/out at the edges instead of clipping them hard. */
+  mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+
+.brands-track {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  width: max-content;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  animation: brandsScroll 28s linear infinite;
+}
+
+.brands:hover .brands-track {
+  animation-play-state: paused;
+}
+
+.brands-item {
+  flex: 0 0 auto;
+  font-family: 'Oswald', var(--heading);
+  font-weight: 700;
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.brands-item:hover {
+  color: var(--text-h);
+}
+
+@media (max-width: 640px) {
+  .brands-item {
+    font-size: 19px;
+  }
+
+  .brands-track {
+    gap: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brands-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .brands-track-viewport {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  /* The list is duplicated for the seamless loop — with the animation off,
+     only show one copy so brands don't visibly repeat. */
+  .brands-item:nth-child(n + 9) {
+    display: none;
+  }
+}

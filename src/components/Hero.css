@@ -40,6 +40,40 @@
   }
 }
 
+.hero-stage {
+  position: relative;
+  /* One viewport height, plus a fixed budget for the pin to hold through
+     the zoom-out (SHRINK_RUNWAY_PX in Hero.jsx) with room to spare, before
+     releasing into the content below — independent of viewport height. */
+  min-height: calc(100svh + 900px);
+  background: #fff;
+}
+
+.hero-pin {
+  position: sticky;
+  top: 86px;
+  z-index: 10;
+  padding: 12px 0 24px;
+}
+
+.hero-frame {
+  position: relative;
+  width: var(--primary-w, 100%);
+  height: var(--primary-h, auto);
+  margin: 0 auto;
+  border-radius: var(--primary-radius, 0px);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 20px 45px -20px rgba(0, 0, 0, 0.6);
+  container-type: inline-size;
+  will-change: width, height;
+}
+
+.hero-frame .hero {
+  width: 100%;
+  height: 100%;
+}
+
 .hero {
   position: relative;
   overflow: hidden;
@@ -110,12 +144,15 @@
 }
 
 .hero-content {
-  position: relative;
+  position: absolute;
   z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 520px;
+  gap: 12px;
+  max-width: 420px;
 }
 
 .hero-rule {
@@ -129,7 +166,7 @@
 
 .hero-heading {
   font-family: 'Oswald', var(--heading);
-  font-size: clamp(36px, 8vw, 56px);
+  font-size: clamp(30px, 8cqw, 56px);
   line-height: 0.98;
   font-weight: 700;
   text-transform: uppercase;
@@ -206,8 +243,6 @@
 @media (min-width: 960px) {
   .hero {
     display: block;
-    height: clamp(560px, 46vw, 760px);
-    padding: 0;
   }
 
   .hero-wordmark-layer {
@@ -222,7 +257,7 @@
   }
 
   .hero-wordmark {
-    font-size: clamp(200px, 50vw, 700px);
+    font-size: clamp(120px, 50cqw, 700px);
     line-height: 0.85;
     letter-spacing: 0;
     white-space: nowrap;
@@ -264,5 +299,13 @@
     transition: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .hero-stage {
+    min-height: 0;
+  }
+
+  .hero-pin {
+    position: static;
   }
 }
