@@ -1,3 +1,25 @@
+/* Preflight is skipped on purpose: the existing hand-written component CSS
+   (Nav.css, Hero.css, BrandsMarquee.css) already defines its own resets and
+   would fight Tailwind's base reset. Tailwind here only powers new sections. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme {
+  --color-ink: #18181b;
+  --color-ink-dim: #3f3f46;
+  --color-body: #52525b;
+  --color-body-dim: #8f8f97;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f7f7f8;
+  --color-surface-subtle: #f2f2f4;
+  --color-border: #e5e5e8;
+  --color-border-strong: #d4d4d8;
+  --color-danger: #e0342d;
+
+  --font-display: 'Oswald', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
 :root {
   --text: #52525b;
   --text-h: #18181b;

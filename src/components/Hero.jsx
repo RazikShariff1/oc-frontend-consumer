@@ -12,8 +12,6 @@ const NEIGHBOR_REVEAL_START = 0.75 // fraction of shrink progress at which neigh
 const DOCKED_THRESHOLD = 0.98 // progress past which the nav arrows become usable
 const SLIDE_MS = 550 // must match the transition duration on .hero-slot.is-animating in Hero.css
 
-// Placeholder copy/CTAs are shared across slides for now — swap in real
-// per-slide content when it's available.
 const SLIDES = [
   {
     id: 'terrain',
@@ -26,15 +24,15 @@ const SLIDES = [
     id: 'grip',
     bg: bikeRight,
     riderImg: null,
-    heading: 'Rule every terrain.',
-    copy: 'Engineered for those who demand more. MOTO TRON gear delivers unmatched performance, precision, and durability across every terrain.',
+    heading: 'Grip that never quits.',
+    copy: 'From hairpin switchbacks to loose gravel, MOTO TRON tires and suspension keep you planted when the road stops cooperating.',
   },
   {
     id: 'dust',
     bg: bikeLeft,
     riderImg: null,
-    heading: 'Rule every terrain.',
-    copy: 'Engineered for those who demand more. MOTO TRON gear delivers unmatched performance, precision, and durability across every terrain.',
+    heading: 'Built for the dust.',
+    copy: 'Sealed, reinforced, and tested off the beaten path — MOTO TRON gear shrugs off grit so you can keep pushing further.',
   },
 ]
 

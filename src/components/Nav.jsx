@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import cartIcon from '../assets/cart-icon.png'
+import { useCart } from '../context/useCart.js'
 import './Nav.css'
 
 const LINKS = [
-  { label: 'Shop', href: '#', active: true },
+  { label: 'Shop', href: '#shop', active: true },
   { label: 'New Arrivals', href: '#' },
   { label: 'Collections', href: '#' },
   { label: 'About', href: '#' },
@@ -11,6 +12,7 @@ const LINKS = [
 
 function Nav() {
   const [open, setOpen] = useState(false)
+  const { itemCount, openCart } = useCart()
 
   return (
     <header className="nav">
@@ -39,9 +41,14 @@ function Nav() {
             </svg>
             <input type="search" placeholder="Search..." aria-label="Search" />
           </label>
-          <button type="button" className="icon-btn cart" aria-label="Cart, 0 items">
+          <button
+            type="button"
+            className="icon-btn cart"
+            aria-label={`Cart, ${itemCount} item${itemCount === 1 ? '' : 's'}`}
+            onClick={openCart}
+          >
             <img src={cartIcon} alt="" />
-            <span className="badge">0</span>
+            <span className="badge">{itemCount}</span>
           </button>
           <button
             type="button"
